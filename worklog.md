@@ -78,3 +78,25 @@ Build a production-ready AI chat web application called "xmarky" that connects t
 
 4. **`/public/xmarky-logo.png`** (REGENERATED)
    - New Nvidia green-themed logo generated via z-ai-generate
+
+---
+## Task ID: 3 - Comprehensive Upgrade, README, and Multi-Platform Deployment
+
+### Upgrades Applied:
+1. **API Key Security** — Moved from hardcoded source to `.env.local` (git-ignored)
+2. **Component Extraction** — Split monolithic 710-line page.tsx into 5 modular components under `src/components/chat/`
+3. **Tooltip System** — Added shadcn/ui TooltipProvider with contextual tooltips on all buttons and inputs
+4. **Keyboard Shortcuts** — Ctrl+/ to focus input, displayed in shortcut tooltip panel
+5. **localStorage Persistence** — Conversations auto-save and restore across page reloads
+6. **Clear History** — Added trash button to clear conversation and localStorage
+7. **Message Counter** — Shows message count in footer
+8. **Config Fixes** — Removed `ignoreBuildErrors`, enabled `reactStrictMode`, removed dead `tailwind.config.ts`
+9. **Package Renamed** — From `nextjs_tailwind_shadcn_ts` to `xmarky` v1.0.0
+10. **AGENTS.md** — Added to project per ai-skills-library conventions
+11. **README.md** — Comprehensive documentation with architecture, quick start, deployment, customization
+12. **.env.example** — Template for developer onboarding
+
+### Deployments:
+- **GitHub**: https://github.com/marktantongco/xmarky (clean history, no secrets)
+- **Vercel**: https://xmarky.vercel.app (production, with env vars configured)
+- **GitHub Pages**: https://marktantongco.github.io/xmarky/ (redirects to Vercel)
