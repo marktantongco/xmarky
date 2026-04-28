@@ -7,10 +7,10 @@ import {
   FileText, User, Share2, Megaphone, ShoppingCart,
   Rocket, Shield, Brain, HelpCircle, AlertTriangle, Minimize2,
   FileOutput, Compass, Box, Monitor, ChevronDown, ChevronUp,
-  Ruler, Sparkles, Puzzle
+  Ruler, Sparkles, Puzzle, Copy, Check, Tag
 } from 'lucide-react';
 import { ACCENT, ACCENT_DIM } from '@/lib/chat';
-import { skills, searchSkills, getSkillsByCategory, SKILL_CATEGORIES, Skill } from '@/lib/skills';
+import { skills, searchSkills, getSkillsByCategory, SKILL_CATEGORIES, skillToCopyText, Skill } from '@/lib/skills';
 
 const iconMap: Record<string, React.ReactNode> = {
   Zap: <Zap className="size-5" />,
@@ -51,7 +51,29 @@ const categoryColors: Record<string, string> = {
 
 function SkillCard({ skill }: { skill: Skill }) {
   const [expanded, setExpanded] = useState(false);
+  const [copied, setCopied] = useState(false);
   const color = categoryColors[skill.category] || ACCENT;
+
+  const handleCopy = () => {
+    const text = skillToCopyText(skill);
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  const handleCopyCombo = () => {
+    navigator.clipboard.writeText(skill.combo).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   return (
     <motion.div
@@ -73,8 +95,8 @@ function SkillCard({ skill }: { skill: Skill }) {
             >
               {iconMap[skill.icon] || <Sparkles className="size-5" />}
             </div>
-            <div>
-              <div className="flex items-center gap-2">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="text-sm font-semibold text-white">{skill.name}</h3>
                 <span
                   className="text-[9px] px-1.5 py-0.5 rounded-full font-medium uppercase tracking-wide"
@@ -86,10 +108,32 @@ function SkillCard({ skill }: { skill: Skill }) {
                   {skill.status}
                 </span>
               </div>
+              {/* Combo name */}
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <Tag className="size-3" style={{ color }} />
+                <code
+                  className="text-[10px] font-mono"
+                  style={{ color }}
+                >
+                  {skill.combo}
+                </code>
+              </div>
               <p className="text-xs text-gray-400 mt-1 line-clamp-2">{skill.description}</p>
             </div>
           </div>
-          <div className="flex-shrink-0">
+          <div className="flex flex-col items-center gap-1 flex-shrink-0">
+            {/* Copy combo button */}
+            <button
+              onClick={(e) => { e.stopPropagation(); handleCopyCombo(); }}
+              className="p-1.5 rounded-md bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+              title={`Copy combo: ${skill.combo}`}
+            >
+              {copied ? (
+                <Check className="size-3" style={{ color: ACCENT }} />
+              ) : (
+                <Copy className="size-3 text-gray-500" />
+              )}
+            </button>
             {expanded ? (
               <ChevronUp className="size-4 text-gray-500" />
             ) : (
@@ -161,6 +205,24 @@ function SkillCard({ skill }: { skill: Skill }) {
                   ))}
                 </ul>
               </div>
+
+              {/* Copy full skill button */}
+              <button
+                onClick={handleCopy}
+                className="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer text-xs text-gray-400 hover:text-white"
+              >
+                {copied ? (
+                  <>
+                    <Check className="size-3.5" style={{ color: ACCENT }} />
+                    <span style={{ color: ACCENT }}>Skill copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="size-3.5" />
+                    <span>Copy full skill definition</span>
+                  </>
+                )}
+              </button>
             </div>
           </motion.div>
         )}
@@ -192,7 +254,7 @@ export function SkillsTab() {
       <div>
         <h2 className="text-2xl font-bold text-white">Skills Library</h2>
         <p className="text-sm text-gray-400 mt-1">
-          {skills.length} skills across {SKILL_CATEGORIES.length} categories. Click any skill to expand details.
+          {skills.length} skills across {SKILL_CATEGORIES.length} categories. Click any skill to expand details. Copy combo names to chain skills.
         </p>
       </div>
 
@@ -223,7 +285,7 @@ export function SkillsTab() {
           type="text"
           value={query}
           onChange={(e) => { setQuery(e.target.value); setActiveCategory(null); }}
-          placeholder="Search skills by name, description, or trigger phrase..."
+          placeholder="Search skills by name, combo, description, or trigger phrase..."
           className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#12122a] border border-white/5 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-violet-500/30 transition-colors"
         />
       </div>

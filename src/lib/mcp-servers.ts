@@ -4,6 +4,7 @@ export interface MCPServer {
   description: string;
   category: 'AI/ML' | 'Development' | 'Data' | 'Communication' | 'Productivity' | 'System';
   status: 'stable' | 'beta' | 'experimental';
+  enabled: boolean;
   installCommand: string;
   configTemplate: string;
   tools: string[];
@@ -17,6 +18,7 @@ export const mcpServers: MCPServer[] = [
     description: 'Read, write, and manage files and directories on the local filesystem. Essential for any code-generation or file-processing workflow.',
     category: 'System',
     status: 'stable',
+    enabled: true,
     installCommand: 'npm install -g @anthropic/mcp-filesystem',
     configTemplate: `{
   "mcpServers": {
@@ -36,6 +38,7 @@ export const mcpServers: MCPServer[] = [
     description: 'Interact with GitHub repositories, issues, pull requests, and actions. Manage code reviews and CI/CD workflows.',
     category: 'Development',
     status: 'stable',
+    enabled: true,
     installCommand: 'npm install -g @anthropic/mcp-github',
     configTemplate: `{
   "mcpServers": {
@@ -57,6 +60,7 @@ export const mcpServers: MCPServer[] = [
     description: 'Execute SQL queries, manage database schemas, and inspect table structures. Supports read-only and read-write modes.',
     category: 'Data',
     status: 'stable',
+    enabled: false,
     installCommand: 'npm install -g @anthropic/mcp-postgres',
     configTemplate: `{
   "mcpServers": {
@@ -76,6 +80,7 @@ export const mcpServers: MCPServer[] = [
     description: 'Browser automation for web scraping, screenshots, PDF generation, and end-to-end testing via headless Chrome.',
     category: 'Development',
     status: 'stable',
+    enabled: false,
     installCommand: 'npm install -g @anthropic/mcp-puppeteer',
     configTemplate: `{
   "mcpServers": {
@@ -95,6 +100,7 @@ export const mcpServers: MCPServer[] = [
     description: 'Send messages, manage channels, search conversations, and interact with Slack workspaces programmatically.',
     category: 'Communication',
     status: 'stable',
+    enabled: false,
     installCommand: 'npm install -g @anthropic/mcp-slack',
     configTemplate: `{
   "mcpServers": {
@@ -117,6 +123,7 @@ export const mcpServers: MCPServer[] = [
     description: 'Persistent knowledge graph for storing and retrieving information across sessions. Enables long-term agent memory.',
     category: 'AI/ML',
     status: 'stable',
+    enabled: true,
     installCommand: 'npm install -g @anthropic/mcp-memory',
     configTemplate: `{
   "mcpServers": {
@@ -136,6 +143,7 @@ export const mcpServers: MCPServer[] = [
     description: 'Web search via the Brave Search API. Fetch real-time information from the internet for research and fact-checking.',
     category: 'Productivity',
     status: 'stable',
+    enabled: false,
     installCommand: 'npm install -g @anthropic/mcp-brave-search',
     configTemplate: `{
   "mcpServers": {
@@ -157,6 +165,7 @@ export const mcpServers: MCPServer[] = [
     description: 'Custom MCP server for LongCat AI integration — chat completions, image generation, and multi-modal inference.',
     category: 'AI/ML',
     status: 'beta',
+    enabled: true,
     installCommand: 'npm install -g mcp-longcat',
     configTemplate: `{
   "mcpServers": {
@@ -177,4 +186,12 @@ export const mcpServers: MCPServer[] = [
 
 export function getMCPServersByCategory(category: string): MCPServer[] {
   return mcpServers.filter((s) => s.category === category);
+}
+
+export function getEnabledServers(): MCPServer[] {
+  return mcpServers.filter((s) => s.enabled);
+}
+
+export function getDisabledServers(): MCPServer[] {
+  return mcpServers.filter((s) => !s.enabled);
 }

@@ -1,6 +1,7 @@
 export interface Skill {
   id: string;
   name: string;
+  combo: string;
   category: 'Development' | 'Design' | 'Content' | 'Marketing' | 'Infrastructure' | 'Reasoning' | 'Utilities';
   icon: string;
   description: string;
@@ -24,6 +25,7 @@ export const skills: Skill[] = [
   {
     id: 'superpowers',
     name: 'Superpowers',
+    combo: 'superpowers::dev',
     category: 'Development',
     icon: 'Zap',
     description: 'Enhanced coding capabilities with multi-file awareness, architecture patterns, and best practices.',
@@ -35,6 +37,7 @@ export const skills: Skill[] = [
   {
     id: 'mcp-builder',
     name: 'MCP Builder',
+    combo: 'mcp-builder::dev',
     category: 'Development',
     icon: 'Server',
     description: 'Build and configure Model Context Protocol servers for tool integration.',
@@ -44,19 +47,21 @@ export const skills: Skill[] = [
     status: 'active',
   },
   {
-    id: 'nvidia-build',
-    name: 'NVIDIA Build',
+    id: 'longcat-build',
+    name: 'LongCat Build',
+    combo: 'longcat-build::dev',
     category: 'Development',
     icon: 'Cpu',
-    description: 'NVIDIA-specific integrations including NIM APIs, CUDA, and GPU-optimized workflows.',
-    trigger: 'nvidia, nim, gpu, cuda',
-    instructions: ['Configure NVIDIA endpoints', 'Optimize for GPU inference', 'Implement streaming'],
-    constraints: ['Use official SDKs', 'Handle rate limits', 'Implement backoff'],
+    description: 'LongCat AI integrations including API endpoints, streaming, and model-optimized workflows.',
+    trigger: 'longcat, api, model, inference, streaming',
+    instructions: ['Configure LongCat endpoints', 'Optimize for inference', 'Implement streaming', 'Handle rate limits'],
+    constraints: ['Use official API', 'Handle rate limits', 'Implement exponential backoff'],
     status: 'active',
   },
   {
     id: 'explained-code',
     name: 'Explained Code',
+    combo: 'explained-code::dev',
     category: 'Development',
     icon: 'BookOpen',
     description: 'Break down complex code into clear, annotated explanations with visual diagrams.',
@@ -68,6 +73,7 @@ export const skills: Skill[] = [
   {
     id: 'frontend-design',
     name: 'Frontend Design',
+    combo: 'frontend-design::design',
     category: 'Design',
     icon: 'Palette',
     description: 'Design and implement production-ready UI components with accessibility and responsive design.',
@@ -79,6 +85,7 @@ export const skills: Skill[] = [
   {
     id: 'web-design-guidelines',
     name: 'Web Design Guidelines',
+    combo: 'web-design::design',
     category: 'Design',
     icon: 'Ruler',
     description: 'Apply design system tokens, spacing rules, color theory, and typography best practices.',
@@ -90,6 +97,7 @@ export const skills: Skill[] = [
   {
     id: 'web-artifacts-builder',
     name: 'Web Artifacts Builder',
+    combo: 'web-artifacts::design',
     category: 'Design',
     icon: 'Globe',
     description: 'Build standalone HTML/CSS/JS artifacts — landing pages, interactive widgets, demos.',
@@ -101,6 +109,7 @@ export const skills: Skill[] = [
   {
     id: 'photography-ai',
     name: 'Photography AI',
+    combo: 'photography-ai::design',
     category: 'Design',
     icon: 'Camera',
     description: 'Generate, analyze, and enhance images using AI vision models and generation APIs.',
@@ -112,6 +121,7 @@ export const skills: Skill[] = [
   {
     id: 'seo-content-writer',
     name: 'SEO Content Writer',
+    combo: 'seo-writer::content',
     category: 'Content',
     icon: 'FileText',
     description: 'Create SEO-optimized content with keyword research, meta tags, and structured data.',
@@ -123,6 +133,7 @@ export const skills: Skill[] = [
   {
     id: 'humanizer',
     name: 'Humanizer',
+    combo: 'humanizer::content',
     category: 'Content',
     icon: 'User',
     description: 'Transform AI-generated text into natural, human-sounding content while preserving meaning.',
@@ -134,6 +145,7 @@ export const skills: Skill[] = [
   {
     id: 'social-content-pillars',
     name: 'Social Content Pillars',
+    combo: 'content-pillars::content',
     category: 'Content',
     icon: 'Share2',
     description: 'Define and generate content pillars for social media strategy.',
@@ -145,6 +157,7 @@ export const skills: Skill[] = [
   {
     id: 'social-media-manager',
     name: 'Social Media Manager',
+    combo: 'social-media::content',
     category: 'Content',
     icon: 'Megaphone',
     description: 'Plan, create, and schedule social media content across platforms.',
@@ -156,6 +169,7 @@ export const skills: Skill[] = [
   {
     id: 'gumroad-pipeline',
     name: 'Gumroad Pipeline',
+    combo: 'gumroad::marketing',
     category: 'Marketing',
     icon: 'ShoppingCart',
     description: 'End-to-end product pipeline for Gumroad — from ideation to launch and sales optimization.',
@@ -167,6 +181,7 @@ export const skills: Skill[] = [
   {
     id: 'jtbd-research',
     name: 'JTBD Research',
+    combo: 'jtbd-research::marketing',
     category: 'Marketing',
     icon: 'Search',
     description: 'Jobs To Be Done framework research — understand customer needs and motivations.',
@@ -178,6 +193,7 @@ export const skills: Skill[] = [
   {
     id: 'deployment-manager',
     name: 'Deployment Manager',
+    combo: 'deploy::infra',
     category: 'Infrastructure',
     icon: 'Rocket',
     description: 'Manage deployments to Vercel, GitHub Pages, AWS, and other platforms.',
@@ -189,6 +205,7 @@ export const skills: Skill[] = [
   {
     id: 'audit-analyzer',
     name: 'Audit Analyzer',
+    combo: 'audit::infra',
     category: 'Infrastructure',
     icon: 'Shield',
     description: 'Performance, accessibility, and security audits with actionable recommendations.',
@@ -200,6 +217,7 @@ export const skills: Skill[] = [
   {
     id: 'chain-of-thought',
     name: 'Chain of Thought',
+    combo: 'chain-of-thought::reasoning',
     category: 'Reasoning',
     icon: 'Brain',
     description: 'Structured step-by-step reasoning for complex problem decomposition and analysis.',
@@ -211,6 +229,7 @@ export const skills: Skill[] = [
   {
     id: 'socratic-method',
     name: 'Socratic Method',
+    combo: 'socratic::reasoning',
     category: 'Reasoning',
     icon: 'HelpCircle',
     description: 'Ask probing questions to deepen understanding and challenge assumptions.',
@@ -222,6 +241,7 @@ export const skills: Skill[] = [
   {
     id: 'devils-advocate',
     name: 'Devil\'s Advocate',
+    combo: 'devils-advocate::reasoning',
     category: 'Reasoning',
     icon: 'AlertTriangle',
     description: 'Stress-test ideas by finding counterarguments, edge cases, and failure modes.',
@@ -233,6 +253,7 @@ export const skills: Skill[] = [
   {
     id: 'context-compressor',
     name: 'Context Compressor',
+    combo: 'context-compress::reasoning',
     category: 'Reasoning',
     icon: 'Minimize2',
     description: 'Compress and summarize context for efficient token usage in long conversations.',
@@ -244,6 +265,7 @@ export const skills: Skill[] = [
   {
     id: 'output-formatter',
     name: 'Output Formatter',
+    combo: 'output-format::utils',
     category: 'Utilities',
     icon: 'FileOutput',
     description: 'Format AI output into structured documents — Markdown, HTML, JSON, PDF-ready.',
@@ -255,6 +277,7 @@ export const skills: Skill[] = [
   {
     id: 'skill-finder',
     name: 'Skill Finder',
+    combo: 'skill-finder::utils',
     category: 'Utilities',
     icon: 'Compass',
     description: 'Discover and recommend the right skill for any task from the skills library.',
@@ -266,6 +289,7 @@ export const skills: Skill[] = [
   {
     id: 'simulation-sandbox',
     name: 'Simulation Sandbox',
+    combo: 'simulation::utils',
     category: 'Utilities',
     icon: 'Box',
     description: 'Run scenario simulations, what-if analyses, and decision trees in a safe environment.',
@@ -277,6 +301,7 @@ export const skills: Skill[] = [
   {
     id: 'web-reader',
     name: 'Web Reader',
+    combo: 'web-reader::utils',
     category: 'Utilities',
     icon: 'Globe',
     description: 'Extract and analyze content from web pages — articles, docs, and resources.',
@@ -288,6 +313,7 @@ export const skills: Skill[] = [
   {
     id: 'browser-use',
     name: 'Browser Use',
+    combo: 'browser-use::utils',
     category: 'Utilities',
     icon: 'Monitor',
     description: 'Automated browser interactions — navigation, form filling, screenshots, and testing.',
@@ -297,6 +323,31 @@ export const skills: Skill[] = [
     status: 'active',
   },
 ];
+
+/** Generate a copy-ready text block for a skill */
+export function skillToCopyText(skill: Skill): string {
+  const lines = [
+    `# ${skill.name} [${skill.combo}]`,
+    '',
+    `**Category:** ${skill.category}`,
+    `**Status:** ${skill.status}`,
+    `**Triggers:** ${skill.trigger}`,
+    '',
+    skill.description,
+    '',
+    '## Instructions',
+    ...skill.instructions.map((s, i) => `${i + 1}. ${s}`),
+    '',
+    '## Constraints',
+    ...skill.constraints.map((c) => `- ${c}`),
+  ];
+  return lines.join('\n');
+}
+
+/** Generate a combo slug from multiple skill combos */
+export function comboChain(...combos: string[]): string {
+  return combos.join(' + ');
+}
 
 export function getSkillsByCategory(category: string): Skill[] {
   return skills.filter((s) => s.category === category);
@@ -311,6 +362,7 @@ export function searchSkills(query: string): Skill[] {
   return skills.filter(
     (s) =>
       s.name.toLowerCase().includes(q) ||
+      s.combo.toLowerCase().includes(q) ||
       s.description.toLowerCase().includes(q) ||
       s.trigger.toLowerCase().includes(q) ||
       s.category.toLowerCase().includes(q)

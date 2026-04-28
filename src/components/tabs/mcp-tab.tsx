@@ -5,10 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Server, Copy, Check, ExternalLink, ChevronDown, ChevronUp,
   Terminal, Database, Globe, MessageSquare, Brain, Search, Shield,
-  Star, AlertTriangle, Info, Wrench
+  Star, AlertTriangle, Info, Wrench, ToggleLeft, ToggleRight, Filter
 } from 'lucide-react';
 import { ACCENT, ACCENT_DIM } from '@/lib/chat';
-import { mcpServers, MCPServer } from '@/lib/mcp-servers';
+import { mcpServers, getEnabledServers, getDisabledServers, MCPServer } from '@/lib/mcp-servers';
 
 const categoryIcons: Record<string, React.ReactNode> = {
   'AI/ML': <Brain className="size-4" />,
@@ -45,7 +45,6 @@ function MCPServerCard({ server }: { server: MCPServer }) {
       setCopied(id);
       setTimeout(() => setCopied(null), 2000);
     }).catch(() => {
-      // Fallback: ignore clipboard errors (e.g. in restricted contexts)
       setCopied(id);
       setTimeout(() => setCopied(null), 2000);
     });
@@ -57,7 +56,11 @@ function MCPServerCard({ server }: { server: MCPServer }) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      className="rounded-xl border border-white/5 bg-white/[0.02] hover:border-white/10 transition-all overflow-hidden"
+      className={`rounded-xl border transition-all overflow-hidden ${
+        server.enabled
+          ? 'border-white/5 bg-white/[0.02] hover:border-white/10'
+          : 'border-white/[0.03] bg-white/[0.01] opacity-60 hover:opacity-80'
+      }`}
     >
       <button
         onClick={() => setExpanded(!expanded)}
@@ -73,7 +76,20 @@ function MCPServerCard({ server }: { server: MCPServer }) {
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
+                {/* Enable/Disable indicator */}
+                {server.enabled ? (
+                  <ToggleRight className="size-4 text-green-400" />
+                ) : (
+                  <ToggleLeft className="size-4 text-gray-600" />
+                )}
                 <h3 className="text-sm font-semibold text-white">{server.name}</h3>
+                <span
+                  className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium uppercase tracking-wide ${
+                    server.enabled ? 'bg-green-500/15 text-green-400' : 'bg-gray-500/15 text-gray-500'
+                  }`}
+                >
+                  {server.enabled ? 'Enabled' : 'Disabled'}
+                </span>
                 <span
                   className="text-[9px] px-1.5 py-0.5 rounded-full font-medium uppercase tracking-wide"
                   style={{ backgroundColor: status.bg, color: status.color }}
@@ -122,8 +138,9 @@ function MCPServerCard({ server }: { server: MCPServer }) {
                     {server.installCommand}
                   </div>
                   <button
-                    onClick={() => handleCopy(server.installCommand, 'install')}
+                    onClick={(e) => { e.stopPropagation(); handleCopy(server.installCommand, 'install'); }}
                     className="flex-shrink-0 p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+                    title="Copy install command"
                   >
                     {copied === 'install' ? (
                       <Check className="size-3.5" style={{ color: ACCENT }} />
@@ -142,8 +159,9 @@ function MCPServerCard({ server }: { server: MCPServer }) {
                     {server.configTemplate}
                   </pre>
                   <button
-                    onClick={() => handleCopy(server.configTemplate, 'config')}
+                    onClick={(e) => { e.stopPropagation(); handleCopy(server.configTemplate, 'config'); }}
                     className="absolute top-2 right-2 p-1.5 rounded-md bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+                    title="Copy configuration"
                   >
                     {copied === 'config' ? (
                       <Check className="size-3" style={{ color: ACCENT }} />
@@ -193,19 +211,27 @@ function MCPServerCard({ server }: { server: MCPServer }) {
 
 export function MCPTab() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [filter, setFilter] = useState<'all' | 'enabled' | 'disabled'>('all');
   const categories = useMemo(() => [...new Set(mcpServers.map((s) => s.category))], []);
+
+  const enabledCount = getEnabledServers().length;
+  const disabledCount = getDisabledServers().length;
 
   const stats = useMemo(() => ({
     total: mcpServers.length,
     tools: mcpServers.reduce((acc, s) => acc + s.tools.length, 0),
-    stable: mcpServers.filter(s => s.status === 'stable').length,
+    enabled: enabledCount,
+    disabled: disabledCount,
     categories: categories.length,
-  }), [categories.length]);
+  }), [categories.length, enabledCount, disabledCount]);
 
   const filteredServers = useMemo(() => {
-    if (!activeCategory) return mcpServers;
-    return mcpServers.filter((s) => s.category === activeCategory);
-  }, [activeCategory]);
+    let list = mcpServers;
+    if (filter === 'enabled') list = list.filter((s) => s.enabled);
+    if (filter === 'disabled') list = list.filter((s) => !s.enabled);
+    if (activeCategory) list = list.filter((s) => s.category === activeCategory);
+    return list;
+  }, [filter, activeCategory]);
 
   return (
     <div className="space-y-6">
@@ -262,28 +288,62 @@ export function MCPTab() {
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {/* Stats — now with enabled/disabled */}
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
           <p className="text-2xl font-bold" style={{ color: ACCENT }}>{stats.total}</p>
           <p className="text-[10px] text-gray-500 uppercase tracking-wider">Servers</p>
         </div>
-        <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
-          <p className="text-2xl font-bold text-green-400">
-            {stats.tools}
-          </p>
-          <p className="text-[10px] text-gray-500 uppercase tracking-wider">Total Tools</p>
+        <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-3">
+          <p className="text-2xl font-bold text-green-400">{stats.enabled}</p>
+          <p className="text-[10px] text-green-400/70 uppercase tracking-wider">Enabled</p>
+        </div>
+        <div className="rounded-xl border border-gray-500/20 bg-gray-500/5 p-3">
+          <p className="text-2xl font-bold text-gray-400">{stats.disabled}</p>
+          <p className="text-[10px] text-gray-400/70 uppercase tracking-wider">Disabled</p>
         </div>
         <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
-          <p className="text-2xl font-bold text-yellow-400">
-            {stats.stable}
-          </p>
-          <p className="text-[10px] text-gray-500 uppercase tracking-wider">Stable</p>
+          <p className="text-2xl font-bold text-blue-400">{stats.tools}</p>
+          <p className="text-[10px] text-gray-500 uppercase tracking-wider">Total Tools</p>
         </div>
         <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
           <p className="text-2xl font-bold text-cyan-400">{stats.categories}</p>
           <p className="text-[10px] text-gray-500 uppercase tracking-wider">Categories</p>
         </div>
+      </div>
+
+      {/* Enable/Disable filter */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <Filter className="size-3.5 text-gray-500" />
+        <button
+          onClick={() => setFilter('all')}
+          className={`text-[11px] px-3 py-1 rounded-full font-medium transition-all cursor-pointer ${
+            filter === 'all' ? 'text-white' : 'text-gray-400 hover:text-gray-200'
+          }`}
+          style={filter === 'all' ? { backgroundColor: ACCENT_DIM, color: ACCENT } : { backgroundColor: 'rgba(255,255,255,0.05)' }}
+        >
+          All ({mcpServers.length})
+        </button>
+        <button
+          onClick={() => setFilter('enabled')}
+          className={`text-[11px] px-3 py-1 rounded-full font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+            filter === 'enabled' ? 'text-white' : 'text-gray-400 hover:text-gray-200'
+          }`}
+          style={filter === 'enabled' ? { backgroundColor: 'rgba(6,214,160,0.2)', color: '#06d6a0' } : { backgroundColor: 'rgba(255,255,255,0.05)' }}
+        >
+          <ToggleRight className="size-3" />
+          Enabled ({enabledCount})
+        </button>
+        <button
+          onClick={() => setFilter('disabled')}
+          className={`text-[11px] px-3 py-1 rounded-full font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+            filter === 'disabled' ? 'text-white' : 'text-gray-400 hover:text-gray-200'
+          }`}
+          style={filter === 'disabled' ? { backgroundColor: 'rgba(107,114,128,0.25)', color: '#9ca3af' } : { backgroundColor: 'rgba(255,255,255,0.05)' }}
+        >
+          <ToggleLeft className="size-3" />
+          Disabled ({disabledCount})
+        </button>
       </div>
 
       {/* Category filters */}
@@ -328,6 +388,15 @@ export function MCPTab() {
           ))}
         </AnimatePresence>
       </div>
+
+      {filteredServers.length === 0 && (
+        <div className="text-center py-12">
+          <Server className="size-12 text-gray-600 mx-auto mb-3" />
+          <p className="text-sm text-gray-500">
+            No servers matching the current filter
+          </p>
+        </div>
+      )}
     </div>
   );
 }

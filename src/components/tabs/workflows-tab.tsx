@@ -4,16 +4,16 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users, ShieldCheck, Rocket, Network,
-  ChevronRight, Play,
+  ChevronRight, Play, Copy, Check,
   Compass, Server, Zap, Minimize2, Cpu,
   Brain, HelpCircle, AlertTriangle, Box, Shield,
   FileOutput, Search, Palette, Rocket as RocketIcon,
   FileText, User, Megaphone, ShoppingCart,
   Crown, TrendingUp, Code2, Settings, Sparkles
 } from 'lucide-react';
-import { ACCENT, ACCENT_DIM } from '@/lib/chat';
+import { ACCENT } from '@/lib/chat';
 import type { Workflow } from '@/lib/workflows';
-import { workflows } from '@/lib/workflows';
+import { workflows, workflowToCopyText } from '@/lib/workflows';
 import { getSkillById } from '@/lib/skills';
 
 const stepIconMap: Record<string, React.ReactNode> = {
@@ -91,8 +91,11 @@ function PipelineFlow({ workflow, selected }: { workflow: Workflow; selected: bo
 
                     {/* Step content */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <h4 className="text-sm font-semibold text-white">{step.skillName}</h4>
+                        <code className="text-[9px] px-1.5 py-0.5 rounded-md font-mono" style={{ backgroundColor: `${workflow.color}15`, color: workflow.color }}>
+                          {step.combo}
+                        </code>
                         <span className="text-[9px] px-1.5 py-0.5 rounded-full font-medium" style={{ backgroundColor: `${workflow.color}15`, color: workflow.color }}>
                           {step.phase}
                         </span>
@@ -112,6 +115,7 @@ function PipelineFlow({ workflow, selected }: { workflow: Workflow; selected: bo
 
 export function WorkflowsTab() {
   const [selectedWorkflow, setSelectedWorkflow] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const stats = useMemo(() => ({
     total: workflows.length,
@@ -119,6 +123,17 @@ export function WorkflowsTab() {
     uniqueSkills: new Set(workflows.flatMap(w => w.steps.map(s => s.skillId))).size,
     active: workflows.filter(w => w.status === 'active').length,
   }), []);
+
+  const handleCopyWorkflow = (workflow: Workflow) => {
+    const text = workflowToCopyText(workflow);
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedId(workflow.id);
+      setTimeout(() => setCopiedId(null), 2000);
+    }).catch(() => {
+      setCopiedId(workflow.id);
+      setTimeout(() => setCopiedId(null), 2000);
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -183,14 +198,20 @@ export function WorkflowsTab() {
                     >
                       {workflowIconMap[workflow.icon] || <Sparkles className="size-6" />}
                     </div>
-                    <div>
-                      <div className="flex items-center gap-2">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="text-lg font-bold text-white">{workflow.name}</h3>
                         <code
                           className="text-[10px] px-1.5 py-0.5 rounded-md font-mono"
                           style={{ backgroundColor: `${workflow.color}15`, color: workflow.color }}
                         >
                           {workflow.command}
+                        </code>
+                      </div>
+                      {/* Combo chain */}
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <code className="text-[10px] font-mono text-gray-500 truncate max-w-full">
+                          {workflow.combo}
                         </code>
                       </div>
                       <p className="text-sm text-gray-400 mt-1 max-w-2xl">{workflow.description}</p>
@@ -204,11 +225,25 @@ export function WorkflowsTab() {
                       </div>
                     </div>
                   </div>
-                  <ChevronRight
-                    className={`size-5 text-gray-500 transition-transform flex-shrink-0 mt-1 ${
-                      isSelected ? 'rotate-90' : ''
-                    }`}
-                  />
+                  <div className="flex flex-col items-center gap-1 flex-shrink-0">
+                    {/* Copy workflow button */}
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleCopyWorkflow(workflow); }}
+                      className="p-1.5 rounded-md bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+                      title={`Copy ${workflow.name} definition`}
+                    >
+                      {copiedId === workflow.id ? (
+                        <Check className="size-3.5" style={{ color: workflow.color }} />
+                      ) : (
+                        <Copy className="size-3.5 text-gray-500" />
+                      )}
+                    </button>
+                    <ChevronRight
+                      className={`size-5 text-gray-500 transition-transform ${
+                        isSelected ? 'rotate-90' : ''
+                      }`}
+                    />
+                  </div>
                 </div>
               </button>
 
@@ -224,7 +259,8 @@ export function WorkflowsTab() {
         <div className="space-y-2 text-xs text-gray-400">
           <p><strong className="text-gray-300">Type the command</strong> in the chat (e.g., <code className="px-1.5 py-0.5 rounded bg-white/5 text-violet-400 font-mono">/team</code>) to trigger a workflow.</p>
           <p><strong className="text-gray-300">Each workflow</strong> chains multiple skills in sequence, with context flowing between stages.</p>
-          <p><strong className="text-gray-300">Customize</strong> by adding or removing stages, or create your own workflow in the <code className="px-1.5 py-0.5 rounded bg-white/5 text-violet-400 font-mono">workflows/</code> directory.</p>
+          <p><strong className="text-gray-300">Combo names</strong> (e.g., <code className="px-1 py-0.5 rounded bg-white/5 text-violet-400 font-mono text-[10px]">superpowers::dev</code>) let you reference skills by category shorthand.</p>
+          <p><strong className="text-gray-300">Copy workflow</strong> to share the full pipeline definition with combo chains.</p>
           <p><strong className="text-gray-300">Workflows are composable</strong> — you can nest workflows or use individual skills within any workflow.</p>
         </div>
       </div>
