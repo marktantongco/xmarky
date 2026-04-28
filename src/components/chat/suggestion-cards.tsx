@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { BookOpen, Code2, Sparkles, Cpu, Wrench, Network, Workflow } from 'lucide-react';
+import { Code2, Wrench, Network, Workflow } from 'lucide-react';
 import { ACCENT, ACCENT_DIM } from '@/lib/chat';
 
 interface Suggestion {

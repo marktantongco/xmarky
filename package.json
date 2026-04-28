@@ -2,7 +2,7 @@
   "name": "xmarky",
   "version": "1.0.0",
   "private": true,
-  "description": "xmarky — AI chat agent powered by Nvidia NIM (Llama 4 Maverick)",
+  "description": "xmarky — AI agent powered by LongCat-2.0-Preview with 1M context, skills library, workflows, and MCP server integrations",
   "scripts": {
     "dev": "next dev -p 3000 2>&1 | tee dev.log",
     "build": "next build && cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/",

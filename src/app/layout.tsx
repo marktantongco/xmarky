@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   keywords: ["xmarky", "AI", "LongCat", "MCP", "Skills", "Workflows", "Chat", "Agent"],
   authors: [{ name: "xmarky Team" }],
   icons: {
-    icon: "/xmarky-logo.png",
+    icon: "/logo.svg",
   },
   openGraph: {
     title: "xmarky — AI Agent",
