@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { BookOpen, Code2, Sparkles, Cpu } from 'lucide-react';
+import { BookOpen, Code2, Sparkles, Cpu, Wrench, Network, Workflow } from 'lucide-react';
 import { ACCENT, ACCENT_DIM } from '@/lib/chat';
 
 interface Suggestion {
@@ -12,24 +12,24 @@ interface Suggestion {
 
 export const suggestions: Suggestion[] = [
   {
-    icon: <BookOpen className="size-5" />,
-    title: 'Explain quantum computing',
-    description: 'Break down complex quantum concepts in simple terms',
-  },
-  {
     icon: <Code2 className="size-5" />,
-    title: 'Write a Python script',
-    description: 'Create a useful Python script from scratch',
+    title: 'Build me a landing page',
+    description: 'Create a modern landing page with animations and responsive design',
   },
   {
-    icon: <Sparkles className="size-5" />,
-    title: 'What is the meaning of life?',
-    description: 'Explore philosophical perspectives on existence',
+    icon: <Wrench className="size-5" />,
+    title: 'Set up an MCP server',
+    description: 'Guide me through installing and configuring an MCP server',
   },
   {
-    icon: <Cpu className="size-5" />,
-    title: 'Help me brainstorm ideas',
-    description: 'Generate creative ideas for your next project',
+    icon: <Workflow className="size-5" />,
+    title: 'Run the quality workflow',
+    description: 'Execute the Bulletproof Quality pipeline on my codebase',
+  },
+  {
+    icon: <Network className="size-5" />,
+    title: 'Explore the skills library',
+    description: 'Show me available skills and how to use them in workflows',
   },
 ];
 
@@ -50,7 +50,7 @@ export function SuggestionCards({ onSuggestionClick }: { onSuggestionClick: (tit
           whileHover={{ scale: 1.02, y: -2 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => onSuggestionClick(suggestion.title)}
-          className="group text-left p-4 rounded-xl border border-white/5 bg-white/[0.03] hover:border-green-500/20 transition-all duration-200 cursor-pointer"
+          className="group text-left p-4 rounded-xl border border-white/5 bg-white/[0.03] hover:border-violet-500/20 transition-all duration-200 cursor-pointer"
           onMouseEnter={(e) => {
             e.currentTarget.style.backgroundColor = `${ACCENT}0d`;
             e.currentTarget.style.borderColor = `${ACCENT}33`;

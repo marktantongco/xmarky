@@ -14,22 +14,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "xmarky - AI Agent",
-  description: "xmarky is an AI chat agent powered by Nvidia NIM — Llama 4 Maverick. Experience next-gen conversational AI.",
-  keywords: ["xmarky", "AI", "Nvidia", "NIM", "Llama", "Chat", "Agent"],
+  title: "xmarky — AI Agent | LongCat-2.0-Preview",
+  description: "xmarky is an AI agent powered by LongCat-2.0-Preview with 1M token context. Features skills library, multi-skill workflows, and MCP server integrations.",
+  keywords: ["xmarky", "AI", "LongCat", "MCP", "Skills", "Workflows", "Chat", "Agent"],
   authors: [{ name: "xmarky Team" }],
   icons: {
     icon: "/xmarky-logo.png",
   },
   openGraph: {
-    title: "xmarky - AI Agent",
-    description: "AI chat agent powered by Nvidia NIM — Llama 4 Maverick",
+    title: "xmarky — AI Agent",
+    description: "AI agent powered by LongCat-2.0-Preview with 1M context window",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "xmarky - AI Agent",
-    description: "AI chat agent powered by Nvidia NIM — Llama 4 Maverick",
+    title: "xmarky — AI Agent",
+    description: "AI agent powered by LongCat-2.0-Preview with 1M context window",
   },
 };
 

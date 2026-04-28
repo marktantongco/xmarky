@@ -1,11 +1,11 @@
 import { NextRequest } from 'next/server';
 
-const NVIDIA_API_URL = 'https://integrate.api.nvidia.com/v1/chat/completions';
+const LONGCAT_API_URL = 'https://api.longcat.chat/openai/v1/chat/completions';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { messages } = body;
+    const { messages, systemPrompt } = body;
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return new Response(JSON.stringify({ error: 'Messages array is required' }), {
@@ -14,24 +14,31 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const apiKey = process.env.NVIDIA_API_KEY;
+    const apiKey = process.env.LONGCAT_API_KEY;
     if (!apiKey) {
-      console.error('NVIDIA_API_KEY is not set in environment variables');
+      console.error('LONGCAT_API_KEY is not set in environment variables');
       return new Response(
-        JSON.stringify({ error: 'Nvidia API key is not configured' }),
+        JSON.stringify({ error: 'LongCat API key is not configured' }),
         { status: 500, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
-    const model = process.env.NVIDIA_MODEL || 'meta/llama-4-maverick-17b-128e-instruct';
+    const model = process.env.LONGCAT_MODEL || 'LongCat-2.0-Preview';
 
-    // Nvidia NIM uses OpenAI-compatible chat completions format
-    const chatMessages = messages.map((msg: { role: string; content: string }) => ({
-      role: msg.role,
-      content: msg.content,
-    }));
+    // Build messages array with optional system prompt
+    const chatMessages: { role: string; content: string }[] = [];
+    if (systemPrompt) {
+      chatMessages.push({ role: 'system', content: systemPrompt });
+    }
 
-    const response = await fetch(NVIDIA_API_URL, {
+    for (const msg of messages) {
+      chatMessages.push({
+        role: msg.role,
+        content: msg.content,
+      });
+    }
+
+    const response = await fetch(LONGCAT_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -41,20 +48,29 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({
         model,
         messages: chatMessages,
-        max_tokens: 1024,
-        temperature: 1.0,
-        top_p: 1.0,
-        frequency_penalty: 0.0,
-        presence_penalty: 0.0,
+        max_tokens: 32000,
+        temperature: 0.7,
+        top_p: 0.9,
         stream: true,
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Nvidia API error:', response.status, errorText);
+      console.error('LongCat API error:', response.status, errorText);
+
+      let errorMessage = `LongCat API error: ${response.status}`;
+      try {
+        const errorJson = JSON.parse(errorText);
+        if (errorJson.error?.message) {
+          errorMessage = errorJson.error.message;
+        }
+      } catch {
+        // use default error message
+      }
+
       return new Response(
-        JSON.stringify({ error: `Nvidia API error: ${response.status}` }),
+        JSON.stringify({ error: errorMessage }),
         { status: response.status, headers: { 'Content-Type': 'application/json' } }
       );
     }
@@ -90,6 +106,13 @@ export async function POST(request: NextRequest) {
               if (parsed.choices?.[0]?.finish_reason) {
                 controller.enqueue(
                   encoder.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`)
+                );
+              }
+
+              // Forward usage info if available
+              if (parsed.usage) {
+                controller.enqueue(
+                  encoder.encode(`data: ${JSON.stringify({ type: 'usage', usage: parsed.usage })}\n\n`)
                 );
               }
             } catch {

@@ -40,8 +40,8 @@ export function MessageBubble({ message }: { message: Message }) {
                 {
                   '--tw-prose-headings': ACCENT,
                   '--tw-prose-links': ACCENT,
-                  '--tw-prose-bold': '#c5e1a5',
-                  '--tw-prose-code': '#a5d6a7',
+                  '--tw-prose-bold': '#c4b5fd',
+                  '--tw-prose-code': '#a78bfa',
                 } as React.CSSProperties
               }
             >
