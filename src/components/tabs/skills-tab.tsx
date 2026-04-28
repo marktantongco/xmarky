@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, Zap, Server, Cpu, BookOpen, Palette, Globe, Camera,
-  FileText, User, Share2, Megaphone, ShoppingCart, Search as SearchIcon,
+  FileText, User, Share2, Megaphone, ShoppingCart,
   Rocket, Shield, Brain, HelpCircle, AlertTriangle, Minimize2,
   FileOutput, Compass, Box, Monitor, ChevronDown, ChevronUp,
   Ruler, Sparkles, Puzzle
@@ -26,7 +26,7 @@ const iconMap: Record<string, React.ReactNode> = {
   Share2: <Share2 className="size-5" />,
   Megaphone: <Megaphone className="size-5" />,
   ShoppingCart: <ShoppingCart className="size-5" />,
-  Search: <SearchIcon className="size-5" />,
+  Search: <Search className="size-5" />,
   Rocket: <Rocket className="size-5" />,
   Shield: <Shield className="size-5" />,
   Brain: <Brain className="size-5" />,
@@ -173,11 +173,18 @@ export function SkillsTab() {
   const [query, setQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
-  const filteredSkills = query
-    ? searchSkills(query)
-    : activeCategory
-    ? getSkillsByCategory(activeCategory)
-    : skills;
+  const filteredSkills = useMemo(() => {
+    if (query) return searchSkills(query);
+    if (activeCategory) return getSkillsByCategory(activeCategory);
+    return skills;
+  }, [query, activeCategory]);
+
+  const stats = useMemo(() => ({
+    total: skills.length,
+    active: skills.filter(s => s.status === 'active').length,
+    beta: skills.filter(s => s.status === 'beta').length,
+    categories: SKILL_CATEGORIES.length,
+  }), []);
 
   return (
     <div className="space-y-6">
@@ -192,19 +199,19 @@ export function SkillsTab() {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
-          <p className="text-2xl font-bold" style={{ color: ACCENT }}>{skills.length}</p>
+          <p className="text-2xl font-bold" style={{ color: ACCENT }}>{stats.total}</p>
           <p className="text-[10px] text-gray-500 uppercase tracking-wider">Total Skills</p>
         </div>
         <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
-          <p className="text-2xl font-bold text-green-400">{skills.filter(s => s.status === 'active').length}</p>
+          <p className="text-2xl font-bold text-green-400">{stats.active}</p>
           <p className="text-[10px] text-gray-500 uppercase tracking-wider">Active</p>
         </div>
         <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
-          <p className="text-2xl font-bold text-yellow-400">{skills.filter(s => s.status === 'beta').length}</p>
+          <p className="text-2xl font-bold text-yellow-400">{stats.beta}</p>
           <p className="text-[10px] text-gray-500 uppercase tracking-wider">Beta</p>
         </div>
         <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
-          <p className="text-2xl font-bold text-blue-400">{SKILL_CATEGORIES.length}</p>
+          <p className="text-2xl font-bold text-blue-400">{stats.categories}</p>
           <p className="text-[10px] text-gray-500 uppercase tracking-wider">Categories</p>
         </div>
       </div>

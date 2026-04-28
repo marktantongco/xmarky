@@ -142,9 +142,11 @@ export function Sidebar({ activeTab, onTabChange, collapsed, onToggle }: Sidebar
               <button
                 key={tab.id}
                 onClick={() => onTabChange(tab.id)}
-                className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg text-[10px] font-medium transition-all cursor-pointer ${
+                className={`relative flex flex-col items-center gap-1 px-3 py-2 rounded-lg text-[10px] font-medium transition-all cursor-pointer ${
                   isActive ? 'text-white' : 'text-gray-500'
                 }`}
+                aria-label={tab.label}
+                aria-current={isActive ? 'page' : undefined}
               >
                 <span
                   style={{ color: isActive ? ACCENT : undefined }}
@@ -154,10 +156,12 @@ export function Sidebar({ activeTab, onTabChange, collapsed, onToggle }: Sidebar
                 <span>{tab.label}</span>
                 {tab.badge && (
                   <span
-                    className="absolute -top-0.5 -right-0.5 text-[8px] px-1 py-0 rounded-full"
+                    className="absolute -top-0.5 -right-0.5 text-[8px] px-1 py-0 rounded-full leading-none"
                     style={{
                       backgroundColor: ACCENT,
                       color: '#fff',
+                      minWidth: '14px',
+                      textAlign: 'center',
                     }}
                   >
                     {tab.badge}

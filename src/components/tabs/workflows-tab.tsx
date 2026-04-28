@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users, ShieldCheck, Rocket, Network,
-  ChevronRight, Play, ArrowRight,
+  ChevronRight, Play,
   Compass, Server, Zap, Minimize2, Cpu,
   Brain, HelpCircle, AlertTriangle, Box, Shield,
   FileOutput, Search, Palette, Rocket as RocketIcon,
@@ -12,7 +12,8 @@ import {
   Crown, TrendingUp, Code2, Settings, Sparkles
 } from 'lucide-react';
 import { ACCENT, ACCENT_DIM } from '@/lib/chat';
-import { workflows, Workflow } from '@/lib/workflows';
+import type { Workflow } from '@/lib/workflows';
+import { workflows } from '@/lib/workflows';
 import { getSkillById } from '@/lib/skills';
 
 const stepIconMap: Record<string, React.ReactNode> = {
@@ -112,6 +113,13 @@ function PipelineFlow({ workflow, selected }: { workflow: Workflow; selected: bo
 export function WorkflowsTab() {
   const [selectedWorkflow, setSelectedWorkflow] = useState<string | null>(null);
 
+  const stats = useMemo(() => ({
+    total: workflows.length,
+    stages: workflows.reduce((acc, w) => acc + w.steps.length, 0),
+    uniqueSkills: new Set(workflows.flatMap(w => w.steps.map(s => s.skillId))).size,
+    active: workflows.filter(w => w.status === 'active').length,
+  }), []);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -126,7 +134,7 @@ export function WorkflowsTab() {
       {/* Pipeline overview */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
-          <p className="text-2xl font-bold" style={{ color: ACCENT }}>{workflows.length}</p>
+          <p className="text-2xl font-bold" style={{ color: ACCENT }}>{stats.total}</p>
           <p className="text-[10px] text-gray-500 uppercase tracking-wider">Workflows</p>
         </div>
         <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
@@ -137,13 +145,13 @@ export function WorkflowsTab() {
         </div>
         <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
           <p className="text-2xl font-bold text-green-400">
-            {new Set(workflows.flatMap(w => w.steps.map(s => s.skillId))).size}
+            {stats.uniqueSkills}
           </p>
           <p className="text-[10px] text-gray-500 uppercase tracking-wider">Unique Skills</p>
         </div>
         <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
           <p className="text-2xl font-bold text-yellow-400">
-            {workflows.filter(w => w.status === 'active').length}
+            {stats.active}
           </p>
           <p className="text-[10px] text-gray-500 uppercase tracking-wider">Active</p>
         </div>

@@ -10,7 +10,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Send, Plus, X, RotateCcw, StopCircle, Keyboard, Trash2, ArrowDown } from 'lucide-react';
+import { Send, Plus, X, StopCircle, Keyboard, Trash2, ArrowDown, Puzzle, GitBranch, Server } from 'lucide-react';
 import { Message, ACCENT, ACCENT_DIM, MODEL_INFO, STORAGE_KEY } from '@/lib/chat';
 import { XmarkyLogo } from '@/components/chat/xmarky-logo';
 import { TypingIndicator } from '@/components/chat/typing-indicator';
@@ -503,6 +503,7 @@ export default function Home() {
                           onChange={(e) => setInput(e.target.value)}
                           onKeyDown={handleKeyDown}
                           placeholder="Message xmarky..."
+                          aria-label="Chat message input"
                           rows={1}
                           disabled={isLoading}
                           className="flex-1 bg-transparent text-sm text-white placeholder:text-gray-500 resize-none outline-none px-3 py-2 min-h-[36px] max-h-[160px] disabled:opacity-50"
@@ -562,23 +563,23 @@ export default function Home() {
           ) : (
             <>
               {/* ─── Tab Content Header ──────────────────────────────── */}
-              <header className="sticky top-0 z-40 border-b border-white/5 bg-[#0a0a1a]/80 backdrop-blur-xl md:pb-0 pb-16">
-                <div className="max-w-5xl mx-auto px-6 h-14 flex items-center">
+              <header className="sticky top-0 z-40 border-b border-white/5 bg-[#0a0a1a]/80 backdrop-blur-xl">
+                <div className="max-w-5xl mx-auto px-6 h-14 flex items-center gap-2">
                   {activeTab === 'skills' && (
-                    <div className="flex items-center gap-2">
-                      <span style={{ color: ACCENT }} className="text-lg font-bold">Puzzle</span>
-                      <span className="text-sm font-medium text-gray-400">/ Skills Library</span>
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Puzzle className="size-5 flex-shrink-0" style={{ color: ACCENT }} />
+                      <span className="text-sm font-medium text-gray-400 truncate">/ Skills Library</span>
                     </div>
                   )}
                   {activeTab === 'workflows' && (
                     <div className="flex items-center gap-2">
-                      <span style={{ color: ACCENT }} className="text-lg font-bold">GitBranch</span>
+                      <GitBranch className="size-5" style={{ color: ACCENT }} />
                       <span className="text-sm font-medium text-gray-400">/ Workflows</span>
                     </div>
                   )}
                   {activeTab === 'mcp' && (
                     <div className="flex items-center gap-2">
-                      <span style={{ color: ACCENT }} className="text-lg font-bold">Server</span>
+                      <Server className="size-5" style={{ color: ACCENT }} />
                       <span className="text-sm font-medium text-gray-400">/ MCP Servers</span>
                     </div>
                   )}

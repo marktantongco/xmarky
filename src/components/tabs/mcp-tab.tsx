@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Server, Download, Copy, Check, ExternalLink, ChevronDown, ChevronUp,
+  Server, Copy, Check, ExternalLink, ChevronDown, ChevronUp,
   Terminal, Database, Globe, MessageSquare, Brain, Search, Shield,
   Star, AlertTriangle, Info, Wrench
 } from 'lucide-react';
@@ -41,9 +41,14 @@ function MCPServerCard({ server }: { server: MCPServer }) {
   const status = statusStyles[server.status];
 
   const handleCopy = (text: string, id: string) => {
-    navigator.clipboard.writeText(text);
-    setCopied(id);
-    setTimeout(() => setCopied(null), 2000);
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(id);
+      setTimeout(() => setCopied(null), 2000);
+    }).catch(() => {
+      // Fallback: ignore clipboard errors (e.g. in restricted contexts)
+      setCopied(id);
+      setTimeout(() => setCopied(null), 2000);
+    });
   };
 
   return (
@@ -188,11 +193,19 @@ function MCPServerCard({ server }: { server: MCPServer }) {
 
 export function MCPTab() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const categories = [...new Set(mcpServers.map((s) => s.category))];
+  const categories = useMemo(() => [...new Set(mcpServers.map((s) => s.category))], []);
 
-  const filteredServers = activeCategory
-    ? mcpServers.filter((s) => s.category === activeCategory)
-    : mcpServers;
+  const stats = useMemo(() => ({
+    total: mcpServers.length,
+    tools: mcpServers.reduce((acc, s) => acc + s.tools.length, 0),
+    stable: mcpServers.filter(s => s.status === 'stable').length,
+    categories: categories.length,
+  }), [categories.length]);
+
+  const filteredServers = useMemo(() => {
+    if (!activeCategory) return mcpServers;
+    return mcpServers.filter((s) => s.category === activeCategory);
+  }, [activeCategory]);
 
   return (
     <div className="space-y-6">
@@ -252,23 +265,23 @@ export function MCPTab() {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
-          <p className="text-2xl font-bold" style={{ color: ACCENT }}>{mcpServers.length}</p>
+          <p className="text-2xl font-bold" style={{ color: ACCENT }}>{stats.total}</p>
           <p className="text-[10px] text-gray-500 uppercase tracking-wider">Servers</p>
         </div>
         <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
           <p className="text-2xl font-bold text-green-400">
-            {mcpServers.reduce((acc, s) => acc + s.tools.length, 0)}
+            {stats.tools}
           </p>
           <p className="text-[10px] text-gray-500 uppercase tracking-wider">Total Tools</p>
         </div>
         <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
           <p className="text-2xl font-bold text-yellow-400">
-            {mcpServers.filter(s => s.status === 'stable').length}
+            {stats.stable}
           </p>
           <p className="text-[10px] text-gray-500 uppercase tracking-wider">Stable</p>
         </div>
         <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
-          <p className="text-2xl font-bold text-cyan-400">{categories.length}</p>
+          <p className="text-2xl font-bold text-cyan-400">{stats.categories}</p>
           <p className="text-[10px] text-gray-500 uppercase tracking-wider">Categories</p>
         </div>
       </div>

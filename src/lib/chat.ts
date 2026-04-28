@@ -1,5 +1,3 @@
-'use client';
-
 export interface Message {
   id: string;
   role: 'user' | 'assistant';
@@ -26,4 +24,4 @@ export const MODEL_INFO = {
   contextWindow: '1M tokens',
   maxOutput: '128K tokens',
   description: 'High-performance Agentic model with 1M context',
-};
+} as const;
