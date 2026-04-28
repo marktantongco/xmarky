@@ -66,3 +66,23 @@ Stage Summary:
 - GitHub: https://github.com/marktantongco/xmarky (pushed successfully)
 - Vercel: No credentials available in session — requires VERCEL_TOKEN or dashboard setup
 - User action needed: Add LONGCAT_API_KEY env var on Vercel dashboard if Git integration is active
+
+---
+Task ID: deploy-vercel
+Agent: Main Agent
+Task: Deploy xmarky to Vercel production
+
+Work Log:
+- Authenticated Vercel CLI with user-provided token (account: marktantongco)
+- Linked project to Vercel org: markys-projects-b6633e43/my-project
+- Set 3 production environment variables: LONGCAT_API_KEY, LONGCAT_MODEL, AI_GATEWAY_API_KEY
+- Deployed to production: vercel --prod
+- Build completed in 37s on Vercel (iad1 region)
+- Verified frontend: HTTP 200, 30KB served
+- Verified API route: env vars loaded correctly (error from upstream LongCat quota, not app issue)
+
+Stage Summary:
+- Production URL: https://my-project-mu-sage-32.vercel.app
+- Dashboard: https://vercel.com/markys-projects-b6633e43/my-project
+- Build: Clean (0 errors, all routes compiled)
+- Note: LongCat API key hit rate limit during verification — app is functional, will work when quota resets
