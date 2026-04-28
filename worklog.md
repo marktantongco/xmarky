@@ -86,3 +86,25 @@ Stage Summary:
 - Dashboard: https://vercel.com/markys-projects-b6633e43/my-project
 - Build: Clean (0 errors, all routes compiled)
 - Note: LongCat API key hit rate limit during verification — app is functional, will work when quota resets
+
+---
+Task ID: deploy-ixmarky
+Agent: Main Agent
+Task: Deploy xmarky to correct Vercel project (ixmarky)
+
+Work Log:
+- Deleted old 'my-project' from Vercel
+- Removed stale .vercel config
+- Linked to correct project: prj_kYujNCx4dgDXzRWC513NIPepNR6P (ixmarky)
+- Set 3 production env vars: LONGCAT_API_KEY, LONGCAT_MODEL, AI_GATEWAY_API_KEY
+- Searched for vercel/vercel-plugin in marketplace — not found, needs dashboard setup
+- Deployed to production via vercel --prod
+- Build completed in 38s on Vercel (iad1)
+- Verified: HTTP 200, 30658 bytes served
+
+Stage Summary:
+- Production URL: https://ixmarky.vercel.app
+- Dashboard: https://vercel.com/markys-projects-b6633e43/ixmarky
+- Build: Clean (0 errors, all routes compiled)
+- Old 'my-project' deployment removed
+- Note: vercel/vercel-plugin not available via CLI marketplace — configure via Vercel dashboard
